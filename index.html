@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SleepyLearn - 幫助孩子睡前學習和放鬆的應用程式">
+    <title>SleepyLearn - 睡前學習</title>
+    <style>
+        /* CSS Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Child-friendly base styles */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Large, readable text for children */
+        h1 {
+            font-size: 3rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Large, touch-friendly buttons */
+        .btn {
+            font-size: 1.8rem;
+            padding: 20px 40px;
+            margin: 15px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            min-width: 280px;
+            min-height: 80px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Soft, calming colors */
+        .btn-primary {
+            background: linear-gradient(45deg, #FF9A9E, #FECFEF);
+            color: #5a5a5a;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #A8EDEA, #FED6E3);
+            color: #5a5a5a;
+        }
+
+        .btn-home {
+            background: linear-gradient(45deg, #D299C2, #FEF9D7);
+            color: #5a5a5a;
+            font-size: 1.4rem;
+            min-width: 200px;
+            min-height: 60px;
+        }
+
+        /* Page sections */
+        .page {
+            display: none;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Story page styles */
+        .story-content {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .story-title {
+            font-size: 2.2rem;
+            color: #5a5a5a;
+            margin-bottom: 20px;
+        }
+
+        .story-text {
+            font-size: 1.6rem;
+            line-height: 1.8;
+            color: #666;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .story-text p.highlight {
+            background: linear-gradient(45deg, #FFE066, #FF6B6B);
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: white;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 230, 102, 0.3);
+        }
+
+        .story-text p {
+            transition: all 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* Breathing exercise styles */
+        .breathing-content {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .breathing-instruction {
+            font-size: 2.5rem;
+            color: #5a5a5a;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+
+        .breathing-phase {
+            font-size: 1.8rem;
+            color: #888;
+            margin: 20px 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                font-size: 1.6rem;
+                padding: 18px 35px;
+                min-width: 250px;
+                min-height: 70px;
+            }
+
+            .story-text {
+                font-size: 1.4rem;
+            }
+
+            .breathing-instruction {
+                font-size: 2rem;
+            }
+        }
+
+        /* Loading and transition states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Error message styles */
+        .error-message {
+            background: rgba(255, 107, 107, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            display: none;
+        }
+
+        /* Accessibility improvements */
+        .btn:focus {
+            outline: 3px solid #FFD700;
+            outline-offset: 2px;
+        }
+
+        .btn:focus-visible {
+            outline: 3px solid #FFD700;
+            outline-offset: 2px;
+        }
+
+        /* Keyboard navigation */
+        .btn:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .btn {
+                border: 2px solid currentColor;
+            }
+
+            .story-text p.highlight {
+                background: #000;
+                color: #fff;
+                border: 2px solid #fff;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Homepage -->
+        <div id="homePage" class="page active">
+            <h1>🌙 SleepyLearn</h1>
+            <p
+                style="font-size: 1.4rem; color: white; margin-bottom: 3rem; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);">
+                歡迎來到睡前學習時光
+            </p>
+
+            <button class="btn btn-primary" id="storyBtn" aria-label="開始聽睡前故事">
+                📚 睡前故事
+            </button>
+
+            <button class="btn btn-secondary" id="breathingBtn" aria-label="開始深呼吸放鬆練習">
+                🫁 深呼吸放鬆練習
+            </button>
+        </div>
+
+        <!-- Story Page -->
+        <div id="storyPage" class="page">
+            <h2>📚 睡前故事</h2>
+
+            <div class="story-content">
+                <h3 class="story-title" id="storyTitle">小兔子與月亮</h3>
+
+                <div class="story-text" id="storyText">
+                    <p>從前有一隻小兔子，住在森林裡的小屋子裡...</p>
+                </div>
+
+                <button class="btn btn-primary" id="startStoryBtn" aria-label="開始聽故事">
+                    ▶️ 開始聽故事
+                </button>
+
+                <button class="btn btn-secondary" id="stopStoryBtn" aria-label="停止故事" style="display: none;">
+                    ⏹️ 停止故事
+                </button>
+            </div>
+
+            <button class="btn btn-home" id="storyHomeBtn" aria-label="返回首頁">
+                🏠 返回首頁
+            </button>
+        </div>
+
+        <!-- Breathing Exercise Page -->
+        <div id="breathingPage" class="page">
+            <h2>🫁 深呼吸放鬆練習</h2>
+
+            <div class="breathing-content">
+                <div class="breathing-instruction" id="breathingInstruction">
+                    準備開始放鬆練習
+                </div>
+
+                <div class="breathing-phase" id="breathingPhase">
+                    跟著語音指導一起深呼吸
+                </div>
+
+                <button class="btn btn-primary" id="startBreathingBtn" aria-label="開始放鬆練習">
+                    🌸 開始放鬆練習
+                </button>
+
+                <button class="btn btn-secondary" id="stopBreathingBtn" aria-label="停止練習" style="display: none;">
+                    ⏹️ 停止練習
+                </button>
+            </div>
+
+            <button class="btn btn-home" id="breathingHomeBtn" aria-label="返回首頁">
+                🏠 返回首頁
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
