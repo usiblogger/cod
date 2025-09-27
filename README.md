@@ -5,7 +5,6 @@ A gentle, child-friendly web application designed to help children aged 3-8 year
 ## 🌟 Features
 
 ### 📚 Bedtime Stories
-- **Pre-loaded Story**: "小兔子與月亮" (The Little Rabbit and the Moon)
 - **AI-Generated Stories**: Create new bedtime stories using AI technology
 - **Synchronized Text Highlighting**: Text lights up as it's being read aloud
 - **Chinese Voice Narration**: Clear, child-appropriate speech synthesis
@@ -13,10 +12,6 @@ A gentle, child-friendly web application designed to help children aged 3-8 year
 ### 🫁 4-7-8 Breathing Method
 - **Harvard-Recommended Technique**: Based on Dr. Andrew Weil's 4-7-8 breathing method
 - **Scientifically Proven**: Activates parasympathetic nervous system for rapid relaxation
-- **Timed Phases**: 
-  - Inhale through nose: 4 seconds
-  - Hold breath: 7 seconds  
-  - Exhale through mouth: 8 seconds
 - **4 Complete Cycles**: Optimal number for sleep preparation
 - **Visual Timer**: Real-time countdown for each breathing phase
 - **Guided Instructions**: Step-by-step voice guidance in Chinese
@@ -57,6 +52,39 @@ Research shows that **bedtime learning significantly enhances children's compreh
 
 ## Technologies
 
+SleepyLearn showcases a rich ecosystem of *cutting-edge web technologies*, demonstrating how modern development can remain accessible to beginner engineers while delivering professional-grade functionality:
+
+#### *🌐 Frontend Technologies*
+- *HTML5*: Semantic markup, accessibility features, responsive design
+- *CSS3*: Advanced styling, gradients, animations, flexbox, grid layout
+- *Vanilla JavaScript (ES6+)*: Modern syntax, classes, async/await, modules
+- *Web APIs*: Extensive use of browser-native capabilities
+
+#### *🎵 Audio & Speech Technologies*
+- *Web Speech API*: SpeechSynthesis for text-to-speech conversion
+- *HTML5 Audio API*: Background music and sound effect management
+- *AudioContext*: Advanced audio processing and mixing
+- *Media Session API*: Audio playback control integration
+
+#### *🤖 AI & External Services*
+- *FreeGPT API*: AI-powered story generation
+- *CDN Integration*: jsDelivr for reliable external library loading
+- *RESTful API Integration*: Asynchronous data fetching and error handling
+- *Fallback Systems*: Robust offline functionality
+
+#### *📱 Mobile & Cross-Platform*
+- *Ionic Capacitor*: Native mobile app deployment
+- *Progressive Web App (PWA)*: Service worker ready architecture
+- *Responsive Design*: Mobile-first approach with touch optimization
+- *Cross-browser Compatibility*: Chrome, Firefox, Safari, Edge support
+
+#### *🏗️ Architecture & Development*
+- *ES6 Classes*: Object-oriented programming patterns
+- *Module Pattern*: Clean separation of concerns
+- *Event-Driven Architecture*: Loose coupling between components
+- *State Management*: Centralized application state handling
+- *Error Handling*: Comprehensive try-catch and fallback systems
+
 #### *🎨 UI/UX Technologies*
 - *CSS Grid & Flexbox*: Modern layout systems
 - *CSS Animations*: Smooth transitions and micro-interactions
@@ -79,26 +107,11 @@ This project integrates *25+ cutting-edge technologies* including:
 - *6 Architecture Patterns*: ES6 Classes, Modules, Events, State Management, Error Handling, Configuration
 - *3 Development Tools*: NPM, Git, Markdown
 
-## 🎨 Design Philosophy
-
-SleepyLearn follows child-centered design principles:
-
-- **Simplicity**: Clean, uncluttered interface with clear navigation
-- **Safety**: No data collection, works offline after initial load
-- **Accessibility**: Supports various abilities and interaction methods
-- **Calmness**: Soothing colors and gentle animations promote relaxation
 
 ## 📄 License
 
 Open source project - feel free to use, modify, and share!
 
-## 🔍 Research References
-
-Studies supporting bedtime learning benefits:
-- Memory consolidation during sleep enhances learning retention
-- Bedtime routines reduce childhood anxiety and improve sleep quality  
-- Parent-child bedtime interactions strengthen emotional bonds
-- Deep breathing exercises effectively reduce stress hormones in children
 
 # 📱 SleepyLearn Mobile App Build Guide
 
