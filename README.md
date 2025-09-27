@@ -25,31 +25,6 @@ Research shows that **bedtime learning significantly enhances children's compreh
 SleepyLearn showcases a rich ecosystem of *cutting-edge web technologies*, demonstrating how modern development can remain accessible to beginner engineers while delivering professional-grade functionality:
 
 #### *🌐 Cross-Platform* Technologies*
-- *HTML5*: Semantic markup, accessibility features, responsive design
-- *CSS3*: Advanced styling, gradients, animations, flexbox, grid layout
-- *Vanilla JavaScript (ES6+)*: Modern syntax, classes, async/await, modules
-- *Web APIs*: Extensive use of browser-native capabilities
-- *Ionic Capacitor*: Native mobile app deployment
-- *Progressive Web App (PWA)*: Service worker ready architecture
-
-#### *🎵 Audio & Speech Technologies*
-- *Web Speech API*: SpeechSynthesis for text-to-speech conversion
-- *HTML5 Audio API*: Background music and sound effect management
-- *AudioContext*: Advanced audio processing and mixing
-- *Media Session API*: Audio playback control integration
-
-#### *🤖 AI & External Services*
-- *FreeGPT API*: AI-powered story generation
-- *CDN Integration*: jsDelivr for reliable external library loading
-- *RESTful API Integration*: Asynchronous data fetching and error handling
-- *Fallback Systems*: Robust offline functionality
-
-#### *🏗️ Architecture & Development*
-- *ES6 Classes*: Object-oriented programming patterns
-- *Module Pattern*: Clean separation of concerns
-- *Event-Driven Architecture*: Loose coupling between components
-- *State Management*: Centralized application state handling
-- *Error Handling*: Comprehensive try-catch and fallback systems
 
 #### *📊 Technology Count Summary*
 This project integrates *25+ cutting-edge technologies* including:
@@ -125,61 +100,6 @@ npm run capacitor:open:android
 - **Web Directory**: `.` (current directory)
 - **Entry Point**: `index.html`
 
-### Features Configured:
-- ✅ Splash Screen with app colors
-- ✅ Status Bar styling
-- ✅ Keyboard handling
-- ✅ Back button navigation
-- ✅ Web Speech API support
-- ✅ Audio playback capabilities
-
-## 📱 App Features
-
-### Core Functionality:
-- 🤖 AI-powered bedtime stories
-- 🫁 4-7-8 breathing exercises
-- 🎧 Voice narration with text highlighting
-- 📱 Native mobile experience
-- 🌙 Child-friendly interface
-
-### Mobile Optimizations:
-- Touch-friendly buttons (80px+ height)
-- Responsive design for all screen sizes
-- Native status bar integration
-- Proper keyboard handling
-- Hardware back button support
-
-## 🛠️ Troubleshooting
-
-### Common Issues:
-
-1. **Speech Synthesis not working on iOS**:
-   - Ensure user interaction before starting speech
-   - Check iOS Safari limitations
-
-2. **Audio not playing**:
-   - Verify audio permissions
-   - Test on physical device (simulators may have limitations)
-
-3. **Build errors**:
-   - Run `npm run capacitor:sync` after changes
-   - Clean and rebuild native projects
-
-### Debug Commands:
-```bash
-# View Capacitor info
-npx cap doctor
-
-# Clean sync
-npx cap sync --deployment
-
-# View logs (iOS)
-npx cap run ios --livereload --external
-
-# View logs (Android)
-npx cap run android --livereload --external
-```
-
 ## 📦 Distribution
 
 ### iOS App Store:
@@ -191,19 +111,6 @@ npx cap run android --livereload --external
 1. Generate signed APK/AAB in Android Studio
 2. Upload to Google Play Console
 3. Submit for review
-
-## 🔐 Permissions
-
-The app requires these permissions:
-- **Microphone**: For speech synthesis (system level)
-- **Audio**: For story playback and voice guidance
-- **Network**: For AI story generation (optional)
-
-## 📞 Support
-
-For build issues or questions:
-- Check Capacitor documentation: https://capacitorjs.com/docs
-- Review Ionic documentation: https://ionicframework.com/docs
 
 ---
 
