@@ -68,6 +68,8 @@ Research shows that **bedtime learning significantly enhances children's compreh
 - **1**: Navigate to stories (from home page)
 - **2**: Navigate to breathing exercises (from home page)
 
+
+
 ## 🛠️ Technical Features
 
 ### Audio Technology
@@ -152,3 +154,144 @@ Studies supporting bedtime learning benefits:
 - Bedtime routines reduce childhood anxiety and improve sleep quality  
 - Parent-child bedtime interactions strengthen emotional bonds
 - Deep breathing exercises effectively reduce stress hormones in children
+
+# 📱 SleepyLearn Mobile App Build Guide
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Add Platforms
+```bash
+# Add iOS platform
+npm run capacitor:add:ios
+
+# Add Android platform  
+npm run capacitor:add:android
+```
+
+### 3. Sync Web Assets
+```bash
+npm run capacitor:sync
+```
+
+### 4. Run on Device/Simulator
+```bash
+# Run on iOS
+npm run capacitor:run:ios
+
+# Run on Android
+npm run capacitor:run:android
+```
+
+### 5. Open in Native IDE
+```bash
+# Open Xcode for iOS
+npm run capacitor:open:ios
+
+# Open Android Studio
+npm run capacitor:open:android
+```
+
+## 📋 Prerequisites
+
+### For iOS Development:
+- macOS with Xcode installed
+- iOS Simulator or physical iOS device
+- Apple Developer Account (for device testing)
+
+### For Android Development:
+- Android Studio installed
+- Android SDK and build tools
+- Android device or emulator
+
+## 🔧 Configuration
+
+### App Configuration
+- **App ID**: `com.sleepylearn.app`
+- **App Name**: `SleepyLearn`
+- **Web Directory**: `.` (current directory)
+- **Entry Point**: `index.html`
+
+### Features Configured:
+- ✅ Splash Screen with app colors
+- ✅ Status Bar styling
+- ✅ Keyboard handling
+- ✅ Back button navigation
+- ✅ Web Speech API support
+- ✅ Audio playback capabilities
+
+## 📱 App Features
+
+### Core Functionality:
+- 🤖 AI-powered bedtime stories
+- 🫁 4-7-8 breathing exercises
+- 🎧 Voice narration with text highlighting
+- 📱 Native mobile experience
+- 🌙 Child-friendly interface
+
+### Mobile Optimizations:
+- Touch-friendly buttons (80px+ height)
+- Responsive design for all screen sizes
+- Native status bar integration
+- Proper keyboard handling
+- Hardware back button support
+
+## 🛠️ Troubleshooting
+
+### Common Issues:
+
+1. **Speech Synthesis not working on iOS**:
+   - Ensure user interaction before starting speech
+   - Check iOS Safari limitations
+
+2. **Audio not playing**:
+   - Verify audio permissions
+   - Test on physical device (simulators may have limitations)
+
+3. **Build errors**:
+   - Run `npm run capacitor:sync` after changes
+   - Clean and rebuild native projects
+
+### Debug Commands:
+```bash
+# View Capacitor info
+npx cap doctor
+
+# Clean sync
+npx cap sync --deployment
+
+# View logs (iOS)
+npx cap run ios --livereload --external
+
+# View logs (Android)
+npx cap run android --livereload --external
+```
+
+## 📦 Distribution
+
+### iOS App Store:
+1. Archive in Xcode
+2. Upload to App Store Connect
+3. Submit for review
+
+### Google Play Store:
+1. Generate signed APK/AAB in Android Studio
+2. Upload to Google Play Console
+3. Submit for review
+
+## 🔐 Permissions
+
+The app requires these permissions:
+- **Microphone**: For speech synthesis (system level)
+- **Audio**: For story playback and voice guidance
+- **Network**: For AI story generation (optional)
+
+## 📞 Support
+
+For build issues or questions:
+- Check Capacitor documentation: https://capacitorjs.com/docs
+- Review Ionic documentation: https://ionicframework.com/docs

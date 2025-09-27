@@ -1,0 +1,38 @@
+{
+  "name": "sleepylearn",
+  "version": "1.0.0",
+  "description": "SleepyLearn - 睡前學習應用程式",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Build complete'",
+    "capacitor:add:ios": "npx cap add ios",
+    "capacitor:add:android": "npx cap add android",
+    "capacitor:sync": "npx cap sync",
+    "capacitor:run:ios": "npx cap run ios",
+    "capacitor:run:android": "npx cap run android",
+    "capacitor:open:ios": "npx cap open ios",
+    "capacitor:open:android": "npx cap open android"
+  },
+  "keywords": [
+    "bedtime",
+    "learning",
+    "breathing",
+    "children",
+    "sleep",
+    "stories",
+    "relaxation"
+  ],
+  "author": "SleepyLearn Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@capacitor/cli": "^5.0.0"
+  },
+  "dependencies": {
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/ios": "^5.0.0",
+    "@capacitor/android": "^5.0.0",
+    "@capacitor/splash-screen": "^5.0.0",
+    "@capacitor/status-bar": "^5.0.0",
+    "@capacitor/keyboard": "^5.0.0"
+  }
+}
