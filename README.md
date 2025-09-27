@@ -68,29 +68,27 @@ Research shows that **bedtime learning significantly enhances children's compreh
 - **1**: Navigate to stories (from home page)
 - **2**: Navigate to breathing exercises (from home page)
 
+#### *🎨 UI/UX Technologies*
+- *CSS Grid & Flexbox*: Modern layout systems
+- *CSS Animations*: Smooth transitions and micro-interactions
+- *Custom Properties (CSS Variables)*: Dynamic theming support
+- *Media Queries*: Responsive breakpoints for all devices
+- *Accessibility (ARIA)*: Screen reader and keyboard navigation support
 
+#### *🔧 Development Tools & Practices*
+- *NPM Package Management*: Dependency management and scripts
+- *JSON Configuration*: Structured app and build configuration
+- *Markdown Documentation*: Comprehensive project documentation
+- *Git Version Control*: Professional development workflow
 
-## 🛠️ Technical Features
-
-### Audio Technology
-- **Web Speech API**: Browser-native text-to-speech synthesis
-- **Chinese Voice Support**: Optimized for Mandarin/Cantonese pronunciation
-- **Audio Conflict Management**: Prevents overlapping audio streams
-- **Graceful Fallbacks**: Works even when speech synthesis is unavailable
-
-### AI Story Generation
-- **Real GPT Integration**: Uses FreeGPT API for genuine AI-generated bedtime stories
-- **Smart Fallback System**: 4 backup stories when AI is unavailable
-- **Intelligent Parsing**: Automatically segments AI responses for optimal voice synthesis
-- **Timeout Protection**: 15-second timeout prevents hanging requests
-- **Child-Safe Content**: All stories designed for age-appropriate, positive values
-- **Seamless Experience**: Users get stories whether AI works or not
-
-### Browser Compatibility
-- **Modern Browsers**: Chrome, Firefox, Safari, Edge
-- **Progressive Enhancement**: Core functionality works without advanced features
-- **Error Handling**: User-friendly error messages for children
-- **Performance Monitoring**: Optimized for smooth operation
+#### *📊 Technology Count Summary*
+This project integrates *25+ cutting-edge technologies* including:
+- *5 Core Web Technologies*: HTML5, CSS3, JavaScript ES6+, Web APIs, JSON
+- *4 Audio Technologies*: Web Speech API, HTML5 Audio, AudioContext, Media Session
+- *3 AI Technologies*: FreeGPT API, RESTful integration, Fallback systems
+- *4 Mobile Technologies*: Ionic Capacitor, PWA, Responsive Design, Cross-platform
+- *6 Architecture Patterns*: ES6 Classes, Modules, Events, State Management, Error Handling, Configuration
+- *3 Development Tools*: NPM, Git, Markdown
 
 ## 🎨 Design Philosophy
 
