@@ -218,6 +218,79 @@
                 transform: translateY(0);
             }
         }
+        
+        /* AI Loading Animation */
+        .ai-loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ai-loading.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .ai-loading-text {
+            font-size: 1.4rem;
+            color: #5a5a5a;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .ai-loading-dots {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 20px;
+        }
+        
+        .ai-loading-dots div {
+            position: absolute;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #FF9A9E;
+            animation: aiLoadingDots 1.2s linear infinite;
+        }
+        
+        .ai-loading-dots div:nth-child(1) { left: 8px; animation-delay: 0s; }
+        .ai-loading-dots div:nth-child(2) { left: 32px; animation-delay: -0.4s; }
+        .ai-loading-dots div:nth-child(3) { left: 56px; animation-delay: -0.8s; }
+        
+        @keyframes aiLoadingDots {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .ai-loading-message {
+            font-size: 1.1rem;
+            color: #888;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .ai-robot-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            animation: robotBounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes robotBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
 
         /* Error message styles */
         .error-message {
@@ -308,6 +381,18 @@
             <div class="story-content">
                 <h3 class="story-title" id="storyTitle">小兔子與月亮</h3>
 
+                <!-- AI Loading Animation -->
+                <div class="ai-loading" id="aiLoadingAnimation">
+                    <div class="ai-robot-icon">🤖</div>
+                    <div class="ai-loading-text">AI 正在幫助你創作今天的故事</div>
+                    <div class="ai-loading-dots">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div class="ai-loading-message" id="aiLoadingMessage">請稍等片刻，精彩故事即將呈現...</div>
+                </div>
+
                 <div class="story-text" id="storyText">
                     <p>從前有一隻小兔子，住在森林裡的小屋子裡...</p>
                 </div>
@@ -318,6 +403,10 @@
 
                 <button class="btn btn-secondary" id="stopStoryBtn" aria-label="停止故事" style="display: none;">
                     ⏹️ 停止故事
+                </button>
+
+                <button class="btn btn-secondary" id="generateStoryBtn" aria-label="AI創作新故事">
+                    🤖 AI創作新故事
                 </button>
             </div>
 
@@ -354,6 +443,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/gh/ashishagarwal2023/freegptjs@1.0.2/src/freegpt.min.js"></script>
     <script src="script.js"></script>
 </body>
 

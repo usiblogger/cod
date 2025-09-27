@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Load from jsDelivr -->
+    <script src="https://cdn.jsdelivr.net/gh/ashishagarwal2023/freegptjs@1.0.2/src/freegpt.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeGPT Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #FF9A9E, #FECFEF);
+            color: #5a5a5a;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #response {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+        
+        .loading {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 FreeGPT API 測試頁面</h1>
+        
+        <div>
+            <button onclick="testBasicChat()">測試基本對話</button>
+            <button onclick="testStoryGeneration()">測試故事生成</button>
+            <button onclick="testChineseChat()">測試中文對話</button>
+            <button onclick="clearResponse()">清除回應</button>
+        </div>
+        
+        <div id="response">點擊上方按鈕開始測試...</div>
+    </div>
+
+    <script>
+        const responseDiv = document.getElementById('response');
+        
+        function showLoading(message = '正在處理請求...') {
+            responseDiv.innerHTML = `<div class="loading">${message}</div>`;
+            responseDiv.className = '';
+        }
+        
+        function showResponse(text) {
+            responseDiv.innerHTML = text;
+            responseDiv.className = '';
+        }
+        
+        function showError(error) {
+            responseDiv.innerHTML = `錯誤: ${error}`;
+            responseDiv.className = 'error';
+        }
+        
+        function clearResponse() {
+            responseDiv.innerHTML = '點擊上方按鈕開始測試...';
+            responseDiv.className = '';
+        }
+        
+        async function testBasicChat() {
+            try {
+                showLoading('正在測試基本對話...');
+                
+                // Check if gpt is available
+                if (typeof gpt === 'undefined') {
+                    throw new Error('FreeGPT library not loaded');
+                }
+                
+                const response = await gpt.ask("Hello there, chatgpt!");
+                showResponse(`GPT 回應:\n${response}`);
+                
+            } catch (error) {
+                console.error('Basic chat test error:', error);
+                showError(`基本對話測試失敗: ${error.message}`);
+            }
+        }
+        
+        async function testStoryGeneration() {
+            try {
+                showLoading('正在生成睡前故事...');
+                
+                if (typeof gpt === 'undefined') {
+                    throw new Error('FreeGPT library not loaded');
+                }
+                
+                const prompt = "請創作一個適合3-8歲兒童的溫馨睡前故事，大約150字。故事要有正面的價值觀，幫助孩子放鬆入睡。請用繁體中文。故事主題可以是小動物、友誼或者溫暖的家庭故事。";
+                
+                const response = await gpt.ask(prompt);
+                showResponse(`AI 創作的睡前故事:\n${response}`);
+                
+            } catch (error) {
+                console.error('Story generation test error:', error);
+                showError(`故事生成測試失敗: ${error.message}`);
+            }
+        }
+        
+        async function testChineseChat() {
+            try {
+                showLoading('正在測試中文對話...');
+                
+                if (typeof gpt === 'undefined') {
+                    throw new Error('FreeGPT library not loaded');
+                }
+                
+                const response = await gpt.ask("你好！請用繁體中文回答我。你能幫助小朋友學習嗎？");
+                showResponse(`中文對話測試:\n${response}`);
+                
+            } catch (error) {
+                console.error('Chinese chat test error:', error);
+                showError(`中文對話測試失敗: ${error.message}`);
+            }
+        }
+        
+        // Check if library loaded successfully
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (typeof gpt === 'undefined') {
+                    showError('FreeGPT library 載入失敗。請檢查網路連接或 CDN 是否可用。');
+                } else {
+                    showResponse('✅ FreeGPT library 載入成功！可以開始測試。');
+                }
+            }, 2000);
+        });
+        
+        // Handle any global errors
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+            showError(`全域錯誤: ${event.error?.message || '未知錯誤'}`);
+        });
+        
+        // Handle unhandled promise rejections
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            showError(`Promise 錯誤: ${event.reason?.message || '未知錯誤'}`);
+        });
+    </script>
+</body>
+</html>

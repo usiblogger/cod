@@ -26,7 +26,10 @@ const elements = {
     storyText: document.getElementById('storyText'),
     startStoryBtn: document.getElementById('startStoryBtn'),
     stopStoryBtn: document.getElementById('stopStoryBtn'),
+    generateStoryBtn: document.getElementById('generateStoryBtn'),
     storyHomeBtn: document.getElementById('storyHomeBtn'),
+    aiLoadingAnimation: document.getElementById('aiLoadingAnimation'),
+    aiLoadingMessage: document.getElementById('aiLoadingMessage'),
     
     // Breathing page elements
     breathingInstruction: document.getElementById('breathingInstruction'),
@@ -302,6 +305,298 @@ function checkBrowserSupport() {
     return support;
 }
 
+// AI Story Generator (Real GPT + Fallback Templates)
+class AIStoryGenerator {
+    constructor() {
+        this.isGenerating = false;
+        this.loadingMessages = [
+            "AI 正在想像一個美妙的故事...",
+            "正在為你挑選最棒的角色...",
+            "故事的魔法正在醞釀中...",
+            "AI 正在編織夢幻的情節...",
+            "正在添加溫暖的結局...",
+            "幾乎完成了，請再等一下...",
+            "故事即將準備好囉！"
+        ];
+        this.currentMessageIndex = 0;
+        this.messageInterval = null;
+        this.fallbackStories = [
+            {
+                title: '小熊和星星',
+                segments: [
+                    { text: "在一個安靜的森林裡，住著一隻可愛的小熊。", duration: 4000 },
+                    { text: "每天晚上，小熊都會爬到山頂上看星星。", duration: 4000 },
+                    { text: "有一天，小熊發現天空中有一顆特別亮的星星。", duration: 4500 },
+                    { text: "那顆星星對小熊眨眨眼，好像在說話一樣。", duration: 4000 },
+                    { text: "小熊許了一個願望：希望所有的朋友都能快樂。", duration: 4500 },
+                    { text: "星星聽到了小熊的願望，溫柔地閃爍著。", duration: 4000 },
+                    { text: "從那天起，森林裡的動物們都變得更加友愛。", duration: 4500 },
+                    { text: "小熊明白了，善良的心願總會實現。", duration: 4000 }
+                ]
+            },
+            {
+                title: '勇敢的小貓咪',
+                segments: [
+                    { text: "小貓咪咪咪住在一個溫暖的小屋裡。", duration: 4000 },
+                    { text: "她很害羞，不敢和其他小動物玩耍。", duration: 4000 },
+                    { text: "有一天，小鳥從樹上掉了下來，受了傷。", duration: 4500 },
+                    { text: "咪咪看到了，雖然害怕，但還是跑過去幫忙。", duration: 4500 },
+                    { text: "她輕輕地把小鳥送回了鳥巢。", duration: 4000 },
+                    { text: "小鳥的媽媽非常感謝咪咪的善良。", duration: 4000 },
+                    { text: "從那天起，咪咪發現自己其實很勇敢。", duration: 4500 },
+                    { text: "她交到了很多好朋友，每天都很快樂。", duration: 4000 }
+                ]
+            },
+            {
+                title: '魔法花園',
+                segments: [
+                    { text: "在一個神奇的花園裡，住著許多會說話的花朵。", duration: 4500 },
+                    { text: "小女孩莉莉每天都會來這裡澆水。", duration: 4000 },
+                    { text: "玫瑰花告訴她關於愛心的故事。", duration: 4000 },
+                    { text: "向日葵教她要永遠保持樂觀。", duration: 4000 },
+                    { text: "小雛菊說分享會讓快樂加倍。", duration: 4000 },
+                    { text: "莉莉學會了很多美好的品格。", duration: 4000 },
+                    { text: "她把這些道理分享給所有的朋友。", duration: 4500 },
+                    { text: "花園變得更加美麗，充滿了歡聲笑語。", duration: 4500 }
+                ]
+            },
+            {
+                title: '月亮船的旅行',
+                segments: [
+                    { text: "小男孩阿明夢見自己坐上了月亮船。", duration: 4000 },
+                    { text: "月亮船帶著他在夜空中遨遊。", duration: 4000 },
+                    { text: "他看到了閃閃發光的銀河。", duration: 4000 },
+                    { text: "遇到了友善的星星朋友們。", duration: 4000 },
+                    { text: "星星們告訴他，每個人都有自己的光芒。", duration: 4500 },
+                    { text: "阿明明白了要相信自己的能力。", duration: 4000 },
+                    { text: "月亮船慢慢地把他送回家。", duration: 4000 },
+                    { text: "阿明帶著美好的夢想安然入睡。", duration: 4000 }
+                ]
+            }
+        ];
+        this.usedFallbackStories = [];
+    }
+    
+    async generateBedtimeStory() {
+        if (this.isGenerating) return null;
+        
+        this.isGenerating = true;
+        
+        try {
+            // Show loading animation
+            this.showLoadingAnimation();
+            
+            // First try to use real GPT API
+            const aiStory = await this.tryGenerateWithGPT();
+            
+            if (aiStory) {
+                console.log('✅ AI 故事生成成功');
+                return aiStory;
+            } else {
+                console.log('⚠️ AI 生成失敗，使用後備故事');
+                return this.getFallbackStory();
+            }
+            
+        } catch (error) {
+            console.error('故事生成錯誤:', error);
+            console.log('🔄 使用後備故事');
+            return this.getFallbackStory();
+        } finally {
+            this.hideLoadingAnimation();
+            this.isGenerating = false;
+        }
+    }
+    
+    showLoadingAnimation() {
+        // Hide story content and show loading animation
+        elements.storyText.style.display = 'none';
+        elements.startStoryBtn.style.display = 'none';
+        elements.stopStoryBtn.style.display = 'none';
+        elements.generateStoryBtn.textContent = '🤖 創作中...';
+        elements.generateStoryBtn.disabled = true;
+        
+        // Show loading animation
+        elements.aiLoadingAnimation.classList.add('active');
+        
+        // Start cycling through loading messages
+        this.currentMessageIndex = 0;
+        this.updateLoadingMessage();
+        
+        this.messageInterval = setInterval(() => {
+            this.currentMessageIndex = (this.currentMessageIndex + 1) % this.loadingMessages.length;
+            this.updateLoadingMessage();
+        }, 2000); // Change message every 2 seconds
+    }
+    
+    hideLoadingAnimation() {
+        // Hide loading animation and show story content
+        elements.aiLoadingAnimation.classList.remove('active');
+        elements.storyText.style.display = 'block';
+        elements.startStoryBtn.style.display = 'inline-block';
+        elements.generateStoryBtn.textContent = '🤖 AI創作新故事';
+        elements.generateStoryBtn.disabled = false;
+        
+        // Clear message interval
+        if (this.messageInterval) {
+            clearInterval(this.messageInterval);
+            this.messageInterval = null;
+        }
+    }
+    
+    updateLoadingMessage() {
+        if (elements.aiLoadingMessage) {
+            elements.aiLoadingMessage.textContent = this.loadingMessages[this.currentMessageIndex];
+        }
+    }
+    
+    async tryGenerateWithGPT() {
+        try {
+            // Check if GPT library is available
+            if (typeof gpt === 'undefined') {
+                throw new Error('GPT library not available');
+            }
+            
+            // Create a unique prompt each time to get different stories
+            const themes = ['小動物的冒險', '友誼的力量', '勇氣與成長', '溫暖的家庭', '魔法與奇幻', '善良的心靈', '夢想與希望'];
+            const characters = ['小兔子', '小熊', '小貓', '小鳥', '小狐狸', '小松鼠', '小象'];
+            const settings = ['森林', '花園', '小村莊', '城堡', '海邊', '山谷', '星空下'];
+            
+            const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+            const randomCharacter = characters[Math.floor(Math.random() * characters.length)];
+            const randomSetting = settings[Math.floor(Math.random() * settings.length)];
+            const timestamp = Date.now();
+            
+            const prompt = `請創作一個全新的適合3-8歲兒童的溫馨睡前故事，大約200字。故事主題是「${randomTheme}」，主角是「${randomCharacter}」，場景在「${randomSetting}」。故事要有正面的價值觀，幫助孩子放鬆入睡。請用繁體中文，請直接回答故事內容，不要使用任何標題、標記或格式符號，只需要純文字故事內容。請確保這是一個獨特的新故事。(ID: ${timestamp})`;
+            
+            // Set a timeout for the API call
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('API timeout')), 15000); // 15 second timeout
+            });
+            
+            const gptPromise = gpt.ask(prompt);
+            
+            const response = await Promise.race([gptPromise, timeoutPromise]);
+            
+            console.log('GPT 原始回應:', response);
+            
+            if (!response || response.trim().length < 50) {
+                throw new Error('Invalid response from GPT');
+            }
+            
+            // Parse the GPT response into segments
+            const segments = this.parseGPTResponseIntoSegments(response);
+            
+            const aiStory = {
+                id: `ai-story-${Date.now()}`,
+                title: `🤖 AI創作故事 (${randomTheme})`,
+                segments: segments
+            };
+            
+            console.log('生成的 AI 故事:', aiStory);
+            
+            return aiStory;
+            
+        } catch (error) {
+            console.error('GPT API 錯誤:', error);
+            return null;
+        }
+    }
+    
+    parseGPTResponseIntoSegments(storyText) {
+        // Clean up the text - remove markdown formatting
+        let cleanText = storyText.trim();
+        
+        // Remove markdown headers (####, ###, ##, #)
+        cleanText = cleanText.replace(/^#{1,6}\s*/gm, '');
+        
+        // Remove markdown bold/italic (**text**, *text*)
+        cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, '$1');
+        cleanText = cleanText.replace(/\*(.*?)\*/g, '$1');
+        
+        // Remove markdown links [text](url)
+        cleanText = cleanText.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        
+        // Remove extra whitespace and newlines
+        cleanText = cleanText.replace(/\n\s*\n/g, '\n').replace(/\s+/g, ' ').trim();
+        
+        // Split by common sentence endings
+        let sentences = cleanText.split(/[。！？]/).filter(s => s.trim().length > 0);
+        
+        const segments = [];
+        
+        for (let i = 0; i < sentences.length; i++) {
+            let sentence = sentences[i].trim();
+            
+            // Skip empty sentences or sentences that are too short
+            if (!sentence || sentence.length < 5) continue;
+            
+            // Remove any remaining markdown or special characters at the start
+            sentence = sentence.replace(/^[#\-\*\+\s]+/, '').trim();
+            
+            if (sentence) {
+                // Add appropriate punctuation back
+                let finalSentence = sentence;
+                if (!finalSentence.match(/[。！？]$/)) {
+                    finalSentence += '。';
+                }
+                
+                segments.push({
+                    text: finalSentence,
+                    duration: Math.max(3000, Math.min(6000, finalSentence.length * 150)) // Dynamic duration based on length
+                });
+            }
+        }
+        
+        // Ensure we have at least 4 segments
+        if (segments.length < 4) {
+            // If too few segments, try splitting by commas or other punctuation
+            const allText = segments.map(s => s.text).join('');
+            const moreSentences = allText.split(/[，、；]/).filter(s => s.trim().length > 10);
+            
+            if (moreSentences.length >= 4) {
+                return moreSentences.map(sentence => ({
+                    text: sentence.trim().replace(/^[#\-\*\+\s]+/, '') + '。',
+                    duration: Math.max(3000, Math.min(6000, sentence.length * 150))
+                }));
+            }
+        }
+        
+        // If still no good segments, use fallback
+        if (segments.length === 0) {
+            console.warn('無法解析 AI 回應，使用後備故事');
+            return this.getFallbackStory().segments;
+        }
+        
+        return segments;
+    }
+    
+    getFallbackStory() {
+        // Get available fallback stories (not used recently)
+        let availableStories = this.fallbackStories.filter(story => 
+            !this.usedFallbackStories.includes(story.title)
+        );
+        
+        // If all stories have been used, reset the used list
+        if (availableStories.length === 0) {
+            this.usedFallbackStories = [];
+            availableStories = [...this.fallbackStories];
+        }
+        
+        // Randomly select a story
+        const randomIndex = Math.floor(Math.random() * availableStories.length);
+        const selectedStory = availableStories[randomIndex];
+        
+        // Mark this story as used
+        this.usedFallbackStories.push(selectedStory.title);
+        
+        return {
+            id: `fallback-story-${Date.now()}`,
+            title: `📚 ${selectedStory.title}`,
+            segments: [...selectedStory.segments] // Create a copy
+        };
+    }
+}
+
 // Story Data
 const storyData = {
     id: "rabbit-moon",
@@ -482,14 +777,29 @@ class BreathingController {
                 
                 try {
                     // Speak instruction
-                    const speakPromise = this.audioManager.speakText(phase.instruction);
+                    this.audioManager.speakText(phase.instruction);
+                    
+                    // Visual countdown timer for each phase
+                    let remainingTime = phase.duration / 1000; // Convert to seconds
+                    const updateTimer = () => {
+                        if (!this.isActive) return;
+                        
+                        elements.breathingPhase.textContent = 
+                            `第 ${this.currentCycle + 1} 次，共 ${this.totalCycles} 次 - ${Math.ceil(remainingTime)}秒`;
+                        
+                        remainingTime--;
+                        
+                        if (remainingTime > 0) {
+                            this.phaseTimer = setTimeout(updateTimer, 1000);
+                        }
+                    };
+                    
+                    updateTimer();
                     
                     // Wait for phase duration
-                    const waitPromise = new Promise(resolve => {
-                        this.phaseTimer = setTimeout(resolve, phase.duration);
+                    await new Promise(resolve => {
+                        setTimeout(resolve, phase.duration);
                     });
-                    
-                    await Promise.race([speakPromise, waitPromise]);
                     
                 } catch (error) {
                     console.error('Error in breathing phase:', error);
@@ -541,9 +851,13 @@ class EnhancedNavigationController extends NavigationController {
         this.audioManager = audioManager;
         this.storyPlayer = storyPlayer;
         this.breathingController = breathingController;
+        this.aiStoryGenerator = new AIStoryGenerator();
         
         // Load default story
         this.storyPlayer.loadStory(storyData);
+        
+        // Add AI story generation event listener
+        elements.generateStoryBtn.addEventListener('click', () => this.handleGenerateStory());
     }
     
     handleStartStory() {
@@ -568,6 +882,27 @@ class EnhancedNavigationController extends NavigationController {
     handleStopBreathing() {
         console.log('Stopping breathing exercise');
         this.breathingController.stopExercise();
+    }
+    
+    async handleGenerateStory() {
+        console.log('Generating AI story');
+        
+        const aiStory = await this.aiStoryGenerator.generateBedtimeStory();
+        
+        if (aiStory) {
+            // Load the new AI-generated story
+            this.storyPlayer.loadStory(aiStory);
+            console.log('AI story loaded successfully:', aiStory.title);
+            
+            // Ensure the story text is visible after loading
+            setTimeout(() => {
+                elements.storyText.style.display = 'block';
+                elements.startStoryBtn.style.display = 'inline-block';
+            }, 100);
+        } else {
+            console.error('Failed to generate AI story');
+            showErrorMessage('故事生成失敗，請稍後再試');
+        }
     }
     
     navigateToHome() {
