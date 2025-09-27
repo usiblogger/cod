@@ -24,11 +24,13 @@ Research shows that **bedtime learning significantly enhances children's compreh
 
 SleepyLearn showcases a rich ecosystem of *cutting-edge web technologies*, demonstrating how modern development can remain accessible to beginner engineers while delivering professional-grade functionality:
 
-#### *🌐 Frontend Technologies*
+#### *🌐 Cross-Platform* Technologies*
 - *HTML5*: Semantic markup, accessibility features, responsive design
 - *CSS3*: Advanced styling, gradients, animations, flexbox, grid layout
 - *Vanilla JavaScript (ES6+)*: Modern syntax, classes, async/await, modules
 - *Web APIs*: Extensive use of browser-native capabilities
+- *Ionic Capacitor*: Native mobile app deployment
+- *Progressive Web App (PWA)*: Service worker ready architecture
 
 #### *🎵 Audio & Speech Technologies*
 - *Web Speech API*: SpeechSynthesis for text-to-speech conversion
@@ -42,31 +44,12 @@ SleepyLearn showcases a rich ecosystem of *cutting-edge web technologies*, demon
 - *RESTful API Integration*: Asynchronous data fetching and error handling
 - *Fallback Systems*: Robust offline functionality
 
-#### *📱 Mobile & Cross-Platform*
-- *Ionic Capacitor*: Native mobile app deployment
-- *Progressive Web App (PWA)*: Service worker ready architecture
-- *Responsive Design*: Mobile-first approach with touch optimization
-- *Cross-browser Compatibility*: Chrome, Firefox, Safari, Edge support
-
 #### *🏗️ Architecture & Development*
 - *ES6 Classes*: Object-oriented programming patterns
 - *Module Pattern*: Clean separation of concerns
 - *Event-Driven Architecture*: Loose coupling between components
 - *State Management*: Centralized application state handling
 - *Error Handling*: Comprehensive try-catch and fallback systems
-
-#### *🎨 UI/UX Technologies*
-- *CSS Grid & Flexbox*: Modern layout systems
-- *CSS Animations*: Smooth transitions and micro-interactions
-- *Custom Properties (CSS Variables)*: Dynamic theming support
-- *Media Queries*: Responsive breakpoints for all devices
-- *Accessibility (ARIA)*: Screen reader and keyboard navigation support
-
-#### *🔧 Development Tools & Practices*
-- *NPM Package Management*: Dependency management and scripts
-- *JSON Configuration*: Structured app and build configuration
-- *Markdown Documentation*: Comprehensive project documentation
-- *Git Version Control*: Professional development workflow
 
 #### *📊 Technology Count Summary*
 This project integrates *25+ cutting-edge technologies* including:
