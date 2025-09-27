@@ -18,11 +18,7 @@ A gentle, child-friendly web application designed to help children aged 3-8 year
 
 ## 🧠 The Science Behind Bedtime Learning
 
-Research shows that **bedtime learning significantly enhances children's comprehension and memory consolidation**. The pre-sleep period is a golden opportunity for:
-
-### 🎯 Cognitive Benefits
-### 💤 Sleep Quality Benefits  
-### 👨‍👩‍👧‍👦 Family Bonding
+Research shows that **bedtime learning significantly enhances children's comprehension and memory consolidation**. 
 
 ## Technologies
 
