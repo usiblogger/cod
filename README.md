@@ -1,6 +1,6 @@
-# SleepyLearn - Bedtime Learning iOS/Android/Web App 🌙
+# SleepyLearn - Bedtime Learning App 🌙
 
-A gentle, child-friendly web application designed to help children aged 3-8 years with bedtime learning and relaxation practices through voice-guided stories and breathing exercises.
+A gentle, child-friendly iOS/Android/Web application designed to help children aged 3-8 years with bedtime learning and relaxation practices through voice-guided stories and breathing exercises.
 
 ## 🌟 Features
 
