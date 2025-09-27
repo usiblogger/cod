@@ -21,12 +21,6 @@ A gentle, child-friendly web application designed to help children aged 3-8 year
 - **Visual Timer**: Real-time countdown for each breathing phase
 - **Guided Instructions**: Step-by-step voice guidance in Chinese
 
-### 🎨 Child-Friendly Design
-- **Large Touch-Friendly Buttons**: Minimum 80px height for easy interaction
-- **Soft Gradient Colors**: Calming bedtime-appropriate color scheme
-- **Responsive Design**: Works on tablets, desktops, and mobile devices
-- **Accessibility Features**: Keyboard navigation, ARIA labels, high contrast support
-
 ## 🧠 The Science Behind Bedtime Learning
 
 Research shows that **bedtime learning significantly enhances children's comprehension and memory consolidation**. The pre-sleep period is a golden opportunity for:
@@ -61,12 +55,7 @@ Research shows that **bedtime learning significantly enhances children's compreh
    - Follow the voice instructions and visual timer
    - Complete 5 relaxing breathing cycles
 
-## ⌨️ Keyboard Shortcuts
-
-- **Escape**: Return to home page or stop current activity
-- **Space**: Start/stop current activity
-- **1**: Navigate to stories (from home page)
-- **2**: Navigate to breathing exercises (from home page)
+## Technologies
 
 #### *🎨 UI/UX Technologies*
 - *CSS Grid & Flexbox*: Modern layout systems
@@ -99,51 +88,9 @@ SleepyLearn follows child-centered design principles:
 - **Accessibility**: Supports various abilities and interaction methods
 - **Calmness**: Soothing colors and gentle animations promote relaxation
 
-## 🔧 Installation
-
-No installation required! Simply:
-
-1. Download or clone this repository
-2. Open `index.html` in a web browser
-3. Allow microphone permissions if prompted (for speech synthesis)
-4. Enjoy bedtime learning!
-
-## 🌐 Browser Requirements
-
-- **Recommended**: Chrome 80+, Firefox 75+, Safari 13+, Edge 80+
-- **Speech Synthesis**: Required for voice features
-- **JavaScript**: Must be enabled
-- **Internet Connection**: Required for AI story generation only
-
-## 📱 Device Support
-
-- **Desktop**: Full functionality with keyboard shortcuts
-- **Tablet**: Touch-optimized interface, perfect for bedtime use
-- **Mobile**: Responsive design adapts to smaller screens
-
-## 🤝 Contributing
-
-This project welcomes contributions! Areas for improvement:
-
-- Additional pre-loaded stories in multiple languages
-- More breathing exercise variations
-- Enhanced AI story prompts
-- Accessibility improvements
-- Performance optimizations
-
 ## 📄 License
 
 Open source project - feel free to use, modify, and share!
-
-## 🙏 Acknowledgments
-
-- **FreeGPT**: For AI story generation capabilities
-- **Web Speech API**: For browser-native voice synthesis
-- **Child Development Research**: Informing our bedtime learning approach
-
----
-
-*Sweet dreams and happy learning! 🌙✨*
 
 ## 🔍 Research References
 
@@ -293,3 +240,7 @@ The app requires these permissions:
 For build issues or questions:
 - Check Capacitor documentation: https://capacitorjs.com/docs
 - Review Ionic documentation: https://ionicframework.com/docs
+
+---
+
+*Sweet dreams and happy learning! 🌙✨*
