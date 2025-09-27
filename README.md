@@ -21,34 +21,8 @@ A gentle, child-friendly web application designed to help children aged 3-8 year
 Research shows that **bedtime learning significantly enhances children's comprehension and memory consolidation**. The pre-sleep period is a golden opportunity for:
 
 ### 🎯 Cognitive Benefits
-- **Enhanced Memory Formation**: The brain processes and consolidates information during sleep
-- **Improved Comprehension**: Relaxed state allows better absorption of stories and lessons
-- **Value Integration**: Moral lessons and positive values are better retained when learned before sleep
-
 ### 💤 Sleep Quality Benefits  
-- **Stress Reduction**: Deep breathing exercises lower blood pressure and heart rate
-- **Anxiety Relief**: Calming stories help children process daily experiences
-- **Sleep Preparation**: Consistent bedtime routines signal the brain to prepare for rest
-
 ### 👨‍👩‍👧‍👦 Family Bonding
-- **Quality Time**: Shared bedtime learning creates precious parent-child moments
-- **Communication**: Stories open opportunities for meaningful conversations
-- **Routine Building**: Consistent practices strengthen family bonds and security
-
-## 🚀 How to Use
-
-1. **Open the App**: Launch `index.html` in a modern web browser
-2. **Choose an Activity**:
-   - Click "睡前故事" for bedtime stories
-   - Click "深呼吸放鬆練習" for breathing exercises
-3. **Story Features**:
-   - "開始聽故事" - Listen to the pre-loaded story
-   - "AI創作新故事" - Generate a new AI story
-   - Watch text highlight as it's being read
-4. **Breathing Exercise**:
-   - "開始放鬆練習" - Start guided breathing
-   - Follow the voice instructions and visual timer
-   - Complete 5 relaxing breathing cycles
 
 ## Technologies
 
@@ -113,9 +87,7 @@ This project integrates *25+ cutting-edge technologies* including:
 Open source project - feel free to use, modify, and share!
 
 
-# 📱 SleepyLearn Mobile App Build Guide
-
-## 🚀 Quick Start
+## 📱 SleepyLearn Mobile App Build Guide Quick Start
 
 ### 1. Install Dependencies
 ```bash
