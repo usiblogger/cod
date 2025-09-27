@@ -16,11 +16,11 @@ const elements = {
     homePage: document.getElementById('homePage'),
     storyPage: document.getElementById('storyPage'),
     breathingPage: document.getElementById('breathingPage'),
-    
+
     // Homepage buttons
     storyBtn: document.getElementById('storyBtn'),
     breathingBtn: document.getElementById('breathingBtn'),
-    
+
     // Story page elements
     storyTitle: document.getElementById('storyTitle'),
     storyText: document.getElementById('storyText'),
@@ -30,8 +30,9 @@ const elements = {
     storyHomeBtn: document.getElementById('storyHomeBtn'),
     aiLoadingAnimation: document.getElementById('aiLoadingAnimation'),
     aiLoadingMessage: document.getElementById('aiLoadingMessage'),
-    
+
     // Breathing page elements
+    breathingContent: document.getElementById('breathingContent'),
     breathingInstruction: document.getElementById('breathingInstruction'),
     breathingPhase: document.getElementById('breathingPhase'),
     startBreathingBtn: document.getElementById('startBreathingBtn'),
@@ -45,25 +46,25 @@ class NavigationController {
         this.currentPage = 'home';
         this.initializeEventListeners();
     }
-    
+
     initializeEventListeners() {
         // Homepage navigation
         elements.storyBtn.addEventListener('click', () => this.navigateToStories());
         elements.breathingBtn.addEventListener('click', () => this.navigateToBreathing());
-        
+
         // Return to home buttons
         elements.storyHomeBtn.addEventListener('click', () => this.navigateToHome());
         elements.breathingHomeBtn.addEventListener('click', () => this.navigateToHome());
-        
+
         // Story page buttons (placeholder for now)
         elements.startStoryBtn.addEventListener('click', () => this.handleStartStory());
         elements.stopStoryBtn.addEventListener('click', () => this.handleStopStory());
-        
+
         // Breathing page buttons (placeholder for now)
         elements.startBreathingBtn.addEventListener('click', () => this.handleStartBreathing());
         elements.stopBreathingBtn.addEventListener('click', () => this.handleStopBreathing());
     }
-    
+
     navigateToHome() {
         this.hideAllPages();
         elements.homePage.classList.add('active');
@@ -71,33 +72,48 @@ class NavigationController {
         appState.currentPage = 'home';
         console.log('Navigated to home page');
     }
-    
-    navigateToStories() {
+
+    async navigateToStories() {
         this.hideAllPages();
         elements.storyPage.classList.add('active');
         this.currentPage = 'stories';
         appState.currentPage = 'stories';
         console.log('Navigated to stories page');
+
+        // Auto-generate AI story on first visit
+        if (!this.hasLoadedInitialStory) {
+            this.hasLoadedInitialStory = true;
+            console.log('First visit to stories - attempting to generate AI story');
+
+            // Add a small delay to ensure the page is fully rendered
+            setTimeout(async () => {
+                await this.handleAutoGenerateStory();
+            }, 500);
+        }
     }
-    
+
     navigateToBreathing() {
         this.hideAllPages();
         elements.breathingPage.classList.add('active');
         this.currentPage = 'breathing';
         appState.currentPage = 'breathing';
+
+        // Ensure breathing content container is hidden initially
+        elements.breathingContent.style.display = 'none';
+
         console.log('Navigated to breathing page');
     }
-    
+
     hideAllPages() {
         elements.homePage.classList.remove('active');
         elements.storyPage.classList.remove('active');
         elements.breathingPage.classList.remove('active');
     }
-    
+
     getCurrentPage() {
         return this.currentPage;
     }
-    
+
     // Placeholder methods for story functionality
     handleStartStory() {
         console.log('Start story clicked - functionality to be implemented');
@@ -105,35 +121,23 @@ class NavigationController {
         elements.stopStoryBtn.style.display = 'inline-block';
         appState.isPlaying = true;
     }
-    
+
     handleStopStory() {
         console.log('Stop story clicked - functionality to be implemented');
         elements.startStoryBtn.style.display = 'inline-block';
         elements.stopStoryBtn.style.display = 'none';
         appState.isPlaying = false;
     }
-    
+
     // Placeholder methods for breathing functionality
     handleStartBreathing() {
-        console.log('Start breathing clicked - functionality to be implemented');
-        elements.startBreathingBtn.style.display = 'none';
-        elements.stopBreathingBtn.style.display = 'inline-block';
-        appState.breathingActive = true;
-        
-        // Update instruction text
-        elements.breathingInstruction.textContent = '準備開始...';
-        elements.breathingPhase.textContent = '跟著語音指導深呼吸';
+        console.log('Starting breathing exercise');
+        this.breathingController.startExercise();
     }
-    
+
     handleStopBreathing() {
-        console.log('Stop breathing clicked - functionality to be implemented');
-        elements.startBreathingBtn.style.display = 'inline-block';
-        elements.stopBreathingBtn.style.display = 'none';
-        appState.breathingActive = false;
-        
-        // Reset instruction text
-        elements.breathingInstruction.textContent = '準備開始放鬆練習';
-        elements.breathingPhase.textContent = '跟著語音指導一起深呼吸';
+        console.log('Stopping breathing exercise');
+        this.breathingController.stopExercise();
     }
 }
 
@@ -145,128 +149,128 @@ class AudioManager {
         this.isSupported = 'speechSynthesis' in window;
         this.voices = [];
         this.selectedVoice = null;
-        
+
         if (this.isSupported) {
             this.initializeVoices();
         }
     }
-    
+
     initializeVoices() {
         // Load voices (may be async in some browsers)
         const loadVoices = () => {
             this.voices = this.speechSynthesis.getVoices();
-            
+
             // Try to find a Chinese voice, fallback to default
-            this.selectedVoice = this.voices.find(voice => 
+            this.selectedVoice = this.voices.find(voice =>
                 voice.lang.includes('zh') || voice.lang.includes('cmn')
             ) || this.voices[0];
-            
+
             console.log('Available voices:', this.voices.length);
             console.log('Selected voice:', this.selectedVoice?.name || 'Default');
         };
-        
+
         // Voices might not be loaded immediately
         if (this.voices.length === 0) {
             this.speechSynthesis.addEventListener('voiceschanged', loadVoices);
         }
         loadVoices();
     }
-    
+
     speakText(text, options = {}) {
         if (!this.isSupported) {
             console.warn('Speech synthesis not supported');
             return Promise.reject(new Error('Speech synthesis not supported'));
         }
-        
+
         return new Promise((resolve, reject) => {
             try {
                 // Stop any current speech
                 this.stopSpeech();
-                
+
                 // Create new utterance
                 this.currentUtterance = new SpeechSynthesisUtterance(text);
-                
+
                 // Configure voice settings for children
                 this.currentUtterance.rate = options.rate || 0.8; // Slower for children
                 this.currentUtterance.pitch = options.pitch || 1.1; // Slightly higher pitch
                 this.currentUtterance.volume = options.volume || 0.9;
-                
+
                 // Use selected voice if available
                 if (this.selectedVoice) {
                     this.currentUtterance.voice = this.selectedVoice;
                 }
-                
+
                 // Set up event listeners
                 this.currentUtterance.onend = () => {
                     console.log('Speech finished');
                     resolve();
                 };
-                
+
                 this.currentUtterance.onerror = (event) => {
                     console.error('Speech error:', event.error);
                     reject(new Error(`Speech error: ${event.error}`));
                 };
-                
+
                 this.currentUtterance.onstart = () => {
                     console.log('Speech started:', text);
                 };
-                
+
                 // Start speaking
                 this.speechSynthesis.speak(this.currentUtterance);
-                
+
             } catch (error) {
                 console.error('Error creating speech:', error);
                 reject(error);
             }
         });
     }
-    
+
     stopSpeech() {
         if (this.isSupported && this.speechSynthesis.speaking) {
             this.speechSynthesis.cancel();
             console.log('Speech stopped');
         }
     }
-    
+
     pauseSpeech() {
         if (this.isSupported && this.speechSynthesis.speaking) {
             this.speechSynthesis.pause();
             console.log('Speech paused');
         }
     }
-    
+
     resumeSpeech() {
         if (this.isSupported && this.speechSynthesis.paused) {
             this.speechSynthesis.resume();
             console.log('Speech resumed');
         }
     }
-    
+
     isSpeaking() {
         return this.isSupported && this.speechSynthesis.speaking;
     }
-    
+
     isPaused() {
         return this.isSupported && this.speechSynthesis.paused;
     }
-    
+
     // Background music support
     playBackgroundMusic(audioFile) {
         try {
             if (this.backgroundAudio) {
                 this.stopBackgroundMusic();
             }
-            
+
             this.backgroundAudio = new Audio(audioFile);
             this.backgroundAudio.loop = true;
             this.backgroundAudio.volume = 0.3; // Keep background music quiet
-            
+
             return this.backgroundAudio.play();
         } catch (error) {
             console.warn('Background music not available:', error);
         }
     }
-    
+
     stopBackgroundMusic() {
         if (this.backgroundAudio) {
             this.backgroundAudio.pause();
@@ -274,13 +278,13 @@ class AudioManager {
             this.backgroundAudio = null;
         }
     }
-    
+
     setVolume(level) {
         if (this.backgroundAudio) {
             this.backgroundAudio.volume = Math.max(0, Math.min(1, level));
         }
     }
-    
+
     // Test speech functionality
     testSpeech() {
         const testText = "你好，歡迎來到睡前學習時光！";
@@ -295,13 +299,13 @@ function checkBrowserSupport() {
         audioContext: 'AudioContext' in window || 'webkitAudioContext' in window,
         localStorage: 'localStorage' in window
     };
-    
+
     console.log('Browser support:', support);
-    
+
     if (!support.speechSynthesis) {
         console.warn('Speech Synthesis not supported - will need fallback');
     }
-    
+
     return support;
 }
 
@@ -310,6 +314,7 @@ class AIStoryGenerator {
     constructor() {
         this.isGenerating = false;
         this.loadingMessages = [
+            "歡迎來到 SleepyLearn！AI 正在為你創作故事...",
             "AI 正在想像一個美妙的故事...",
             "正在為你挑選最棒的角色...",
             "故事的魔法正在醞釀中...",
@@ -376,19 +381,19 @@ class AIStoryGenerator {
         ];
         this.usedFallbackStories = [];
     }
-    
+
     async generateBedtimeStory() {
         if (this.isGenerating) return null;
-        
+
         this.isGenerating = true;
-        
+
         try {
             // Show loading animation
             this.showLoadingAnimation();
-            
+
             // First try to use real GPT API
             const aiStory = await this.tryGenerateWithGPT();
-            
+
             if (aiStory) {
                 console.log('✅ AI 故事生成成功');
                 return aiStory;
@@ -396,7 +401,7 @@ class AIStoryGenerator {
                 console.log('⚠️ AI 生成失敗，使用後備故事');
                 return this.getFallbackStory();
             }
-            
+
         } catch (error) {
             console.error('故事生成錯誤:', error);
             console.log('🔄 使用後備故事');
@@ -406,153 +411,168 @@ class AIStoryGenerator {
             this.isGenerating = false;
         }
     }
-    
+
+
+
     showLoadingAnimation() {
-        // Hide story content and show loading animation
+        // Hide story content and instructions during loading
+        const simpleInstructions = document.querySelector('#storyPage .simple-instructions');
+        if (simpleInstructions) {
+            simpleInstructions.style.display = 'none';
+        }
+
+        elements.storyTitle.style.display = 'none'; // Hide the old title
         elements.storyText.style.display = 'none';
         elements.startStoryBtn.style.display = 'none';
         elements.stopStoryBtn.style.display = 'none';
         elements.generateStoryBtn.textContent = '🤖 創作中...';
         elements.generateStoryBtn.disabled = true;
-        
+
         // Show loading animation
         elements.aiLoadingAnimation.classList.add('active');
-        
+
         // Start cycling through loading messages
         this.currentMessageIndex = 0;
         this.updateLoadingMessage();
-        
+
         this.messageInterval = setInterval(() => {
             this.currentMessageIndex = (this.currentMessageIndex + 1) % this.loadingMessages.length;
             this.updateLoadingMessage();
         }, 2000); // Change message every 2 seconds
     }
-    
+
     hideLoadingAnimation() {
+        // Show instructions again
+        const simpleInstructions = document.querySelector('#storyPage .simple-instructions');
+        if (simpleInstructions) {
+            simpleInstructions.style.display = 'block';
+        }
+
         // Hide loading animation and show story content
         elements.aiLoadingAnimation.classList.remove('active');
+        elements.storyTitle.style.display = 'block'; // Show the new title
         elements.storyText.style.display = 'block';
         elements.startStoryBtn.style.display = 'inline-block';
         elements.generateStoryBtn.textContent = '🤖 AI創作新故事';
         elements.generateStoryBtn.disabled = false;
-        
+
         // Clear message interval
         if (this.messageInterval) {
             clearInterval(this.messageInterval);
             this.messageInterval = null;
         }
     }
-    
+
     updateLoadingMessage() {
         if (elements.aiLoadingMessage) {
             elements.aiLoadingMessage.textContent = this.loadingMessages[this.currentMessageIndex];
         }
     }
-    
+
     async tryGenerateWithGPT() {
         try {
             // Check if GPT library is available
             if (typeof gpt === 'undefined') {
                 throw new Error('GPT library not available');
             }
-            
+
             // Create a unique prompt each time to get different stories
             const themes = ['小動物的冒險', '友誼的力量', '勇氣與成長', '溫暖的家庭', '魔法與奇幻', '善良的心靈', '夢想與希望'];
             const characters = ['小兔子', '小熊', '小貓', '小鳥', '小狐狸', '小松鼠', '小象'];
             const settings = ['森林', '花園', '小村莊', '城堡', '海邊', '山谷', '星空下'];
-            
+
             const randomTheme = themes[Math.floor(Math.random() * themes.length)];
             const randomCharacter = characters[Math.floor(Math.random() * characters.length)];
             const randomSetting = settings[Math.floor(Math.random() * settings.length)];
             const timestamp = Date.now();
-            
+
             const prompt = `請創作一個全新的適合3-8歲兒童的溫馨睡前故事，大約200字。故事主題是「${randomTheme}」，主角是「${randomCharacter}」，場景在「${randomSetting}」。故事要有正面的價值觀，幫助孩子放鬆入睡。請用繁體中文，請直接回答故事內容，不要使用任何標題、標記或格式符號，只需要純文字故事內容。請確保這是一個獨特的新故事。(ID: ${timestamp})`;
-            
+
             // Set a timeout for the API call
             const timeoutPromise = new Promise((_, reject) => {
                 setTimeout(() => reject(new Error('API timeout')), 15000); // 15 second timeout
             });
-            
+
             const gptPromise = gpt.ask(prompt);
-            
+
             const response = await Promise.race([gptPromise, timeoutPromise]);
-            
+
             console.log('GPT 原始回應:', response);
-            
+
             if (!response || response.trim().length < 50) {
                 throw new Error('Invalid response from GPT');
             }
-            
+
             // Parse the GPT response into segments
             const segments = this.parseGPTResponseIntoSegments(response);
-            
+
             const aiStory = {
                 id: `ai-story-${Date.now()}`,
                 title: `🤖 AI創作故事 (${randomTheme})`,
                 segments: segments
             };
-            
+
             console.log('生成的 AI 故事:', aiStory);
-            
+
             return aiStory;
-            
+
         } catch (error) {
             console.error('GPT API 錯誤:', error);
             return null;
         }
     }
-    
+
     parseGPTResponseIntoSegments(storyText) {
         // Clean up the text - remove markdown formatting
         let cleanText = storyText.trim();
-        
+
         // Remove markdown headers (####, ###, ##, #)
         cleanText = cleanText.replace(/^#{1,6}\s*/gm, '');
-        
+
         // Remove markdown bold/italic (**text**, *text*)
         cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, '$1');
         cleanText = cleanText.replace(/\*(.*?)\*/g, '$1');
-        
+
         // Remove markdown links [text](url)
         cleanText = cleanText.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-        
+
         // Remove extra whitespace and newlines
         cleanText = cleanText.replace(/\n\s*\n/g, '\n').replace(/\s+/g, ' ').trim();
-        
+
         // Split by common sentence endings
         let sentences = cleanText.split(/[。！？]/).filter(s => s.trim().length > 0);
-        
+
         const segments = [];
-        
+
         for (let i = 0; i < sentences.length; i++) {
             let sentence = sentences[i].trim();
-            
+
             // Skip empty sentences or sentences that are too short
             if (!sentence || sentence.length < 5) continue;
-            
+
             // Remove any remaining markdown or special characters at the start
             sentence = sentence.replace(/^[#\-\*\+\s]+/, '').trim();
-            
+
             if (sentence) {
                 // Add appropriate punctuation back
                 let finalSentence = sentence;
                 if (!finalSentence.match(/[。！？]$/)) {
                     finalSentence += '。';
                 }
-                
+
                 segments.push({
                     text: finalSentence,
                     duration: Math.max(3000, Math.min(6000, finalSentence.length * 150)) // Dynamic duration based on length
                 });
             }
         }
-        
+
         // Ensure we have at least 4 segments
         if (segments.length < 4) {
             // If too few segments, try splitting by commas or other punctuation
             const allText = segments.map(s => s.text).join('');
             const moreSentences = allText.split(/[，、；]/).filter(s => s.trim().length > 10);
-            
+
             if (moreSentences.length >= 4) {
                 return moreSentences.map(sentence => ({
                     text: sentence.trim().replace(/^[#\-\*\+\s]+/, '') + '。',
@@ -560,35 +580,35 @@ class AIStoryGenerator {
                 }));
             }
         }
-        
+
         // If still no good segments, use fallback
         if (segments.length === 0) {
             console.warn('無法解析 AI 回應，使用後備故事');
             return this.getFallbackStory().segments;
         }
-        
+
         return segments;
     }
-    
+
     getFallbackStory() {
         // Get available fallback stories (not used recently)
-        let availableStories = this.fallbackStories.filter(story => 
+        let availableStories = this.fallbackStories.filter(story =>
             !this.usedFallbackStories.includes(story.title)
         );
-        
+
         // If all stories have been used, reset the used list
         if (availableStories.length === 0) {
             this.usedFallbackStories = [];
             availableStories = [...this.fallbackStories];
         }
-        
+
         // Randomly select a story
         const randomIndex = Math.floor(Math.random() * availableStories.length);
         const selectedStory = availableStories[randomIndex];
-        
+
         // Mark this story as used
         this.usedFallbackStories.push(selectedStory.title);
-        
+
         return {
             id: `fallback-story-${Date.now()}`,
             title: `📚 ${selectedStory.title}`,
@@ -622,22 +642,22 @@ class StoryPlayer {
         this.isPlaying = false;
         this.segmentTimer = null;
     }
-    
+
     loadStory(story) {
         this.currentStory = story;
         this.currentSegmentIndex = 0;
-        
+
         // Update UI with story content
         elements.storyTitle.textContent = story.title;
         this.displayStoryText();
     }
-    
+
     displayStoryText() {
         if (!this.currentStory) return;
-        
+
         const storyTextContainer = elements.storyText;
         storyTextContainer.innerHTML = '';
-        
+
         this.currentStory.segments.forEach((segment, index) => {
             const p = document.createElement('p');
             p.textContent = segment.text;
@@ -646,13 +666,16 @@ class StoryPlayer {
             storyTextContainer.appendChild(p);
         });
     }
-    
+
     async playStory() {
         if (!this.currentStory || this.isPlaying) return;
-        
+
         this.isPlaying = true;
         this.currentSegmentIndex = 0;
-        
+
+        // Scroll to story text area when starting playback
+        this.scrollToStoryText();
+
         try {
             await this.playNextSegment();
         } catch (error) {
@@ -660,22 +683,34 @@ class StoryPlayer {
             this.stopStory();
         }
     }
-    
+
+    scrollToStoryText() {
+        // Scroll to the story text area smoothly
+        const storyTextElement = elements.storyText;
+        if (storyTextElement) {
+            storyTextElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+                inline: 'nearest'
+            });
+        }
+    }
+
     async playNextSegment() {
         if (!this.isPlaying || this.currentSegmentIndex >= this.currentStory.segments.length) {
             this.stopStory();
             return;
         }
-        
+
         const segment = this.currentStory.segments[this.currentSegmentIndex];
-        
+
         // Highlight current segment
         this.highlightCurrentText(this.currentSegmentIndex);
-        
+
         try {
             // Speak the segment
             await this.audioManager.speakText(segment.text);
-            
+
             // Move to next segment if still playing
             if (this.isPlaying) {
                 this.currentSegmentIndex++;
@@ -691,29 +726,29 @@ class StoryPlayer {
             this.stopStory();
         }
     }
-    
+
     highlightCurrentText(index) {
         // Remove previous highlights
         document.querySelectorAll('.story-text p').forEach(p => {
             p.classList.remove('highlight');
         });
-        
+
         // Add highlight to current segment
         const currentSegment = document.getElementById(`segment-${index}`);
         if (currentSegment) {
             currentSegment.classList.add('highlight');
         }
     }
-    
+
     stopStory() {
         this.isPlaying = false;
         this.audioManager.stopSpeech();
-        
+
         // Remove all highlights
         document.querySelectorAll('.story-text p').forEach(p => {
             p.classList.remove('highlight');
         });
-        
+
         // Reset UI
         elements.startStoryBtn.style.display = 'inline-block';
         elements.stopStoryBtn.style.display = 'none';
@@ -727,34 +762,45 @@ class BreathingController {
         this.audioManager = audioManager;
         this.isActive = false;
         this.currentCycle = 0;
-        this.totalCycles = 5;
+        this.totalCycles = 4; // 4-7-8 呼吸法建議 4 次循環
         this.currentPhase = 'prepare';
         this.phaseTimer = null;
-        
+
         this.phases = [
-            { type: "inhale", duration: 4000, instruction: "慢慢吸氣..." },
-            { type: "hold", duration: 2000, instruction: "保持..." },
-            { type: "exhale", duration: 6000, instruction: "慢慢呼氣..." },
-            { type: "rest", duration: 2000, instruction: "放鬆..." }
+            { type: "prepare", duration: 6000, instruction: "準備開始，找一個舒適的位置" },
+            { type: "exhale_prep", duration: 6000, instruction: "先用嘴巴將所有氣吐乾淨" },
+            { type: "inhale", duration: 4000, instruction: "用鼻子緩慢深吸氣，數到4" },
+            { type: "hold", duration: 7000, instruction: "屏住呼吸，數到7" },
+            { type: "exhale", duration: 8000, instruction: "用嘴巴慢慢吐氣，數到8" }
         ];
     }
-    
+
     async startExercise() {
         if (this.isActive) return;
-        
+
         this.isActive = true;
         this.currentCycle = 0;
         this.currentPhase = 'prepare';
-        
-        // Update UI
+
+        // Update UI - hide instructions and simple instructions during exercise
         elements.startBreathingBtn.style.display = 'none';
         elements.stopBreathingBtn.style.display = 'inline-block';
         appState.breathingActive = true;
-        
+
+        // Keep simple instructions visible during exercise
+        // (removed the hiding logic)
+
         try {
-            // Welcome message
-            await this.audioManager.speakText("讓我們開始深呼吸練習。跟著我的指導一起呼吸。");
-            
+            // Show breathing content container first for welcome message subtitle
+            elements.breathingContent.style.display = 'block';
+
+            // Welcome message with subtitle
+            const welcomeText = "讓我們開始4-7-8呼吸法練習";
+            elements.breathingInstruction.textContent = welcomeText;
+            elements.breathingPhase.textContent = "哈佛醫師推薦的放鬆技巧";
+
+            await this.audioManager.speakText("讓我們開始4-7-8呼吸法練習。這是哈佛醫師推薦的放鬆技巧，能幫助你快速入睡。請跟著我的指導。");
+
             if (this.isActive) {
                 await this.runBreathingCycle();
             }
@@ -763,82 +809,152 @@ class BreathingController {
             this.stopExercise();
         }
     }
-    
+
     async runBreathingCycle() {
+        // First do the preparation phases
+        const prepPhases = this.phases.slice(0, 2); // prepare and exhale_prep
+
+        for (const phase of prepPhases) {
+            if (!this.isActive) return;
+
+            this.currentPhase = phase.type;
+
+            // Update UI with subtitle (use instruction directly for consistency)
+            elements.breathingInstruction.textContent = phase.instruction;
+            elements.breathingPhase.textContent = "準備階段";
+
+            try {
+                // Speak instruction with subtitle and wait for completion
+                await this.audioManager.speakText(phase.instruction);
+
+                // Additional wait time after speech completes
+                await new Promise(resolve => {
+                    setTimeout(resolve, 1000); // 1 second pause after speech
+                });
+
+            } catch (error) {
+                console.error('Error in preparation phase:', error);
+                return;
+            }
+        }
+
+        // Now do the main 4-7-8 breathing cycles
+        const breathingPhases = this.phases.slice(2); // inhale, hold, exhale
+
         while (this.isActive && this.currentCycle < this.totalCycles) {
-            for (const phase of this.phases) {
+            for (const phase of breathingPhases) {
                 if (!this.isActive) break;
-                
+
                 this.currentPhase = phase.type;
-                
-                // Update UI
-                elements.breathingInstruction.textContent = phase.instruction;
-                elements.breathingPhase.textContent = `第 ${this.currentCycle + 1} 次，共 ${this.totalCycles} 次`;
-                
+
+                // Update UI with specific instructions for each phase
+                let instruction = phase.instruction;
+                let spokenText = instruction; // What will be spoken
+
+                if (phase.type === 'inhale') {
+                    instruction = "用鼻子緩慢深吸氣，數到4...";
+                    spokenText = "用鼻子緩慢深吸氣，數到4";
+                } else if (phase.type === 'hold') {
+                    instruction = "屏住呼吸，數到7...";
+                    spokenText = "屏住呼吸，數到7";
+                } else if (phase.type === 'exhale') {
+                    instruction = "用嘴巴慢慢吐氣，發出嘶聲，數到8...";
+                    spokenText = "用嘴巴慢慢吐氣，發出嘶聲，數到8";
+                }
+
+                // Show subtitle immediately when speaking starts
+                elements.breathingInstruction.textContent = spokenText;
+
                 try {
-                    // Speak instruction
-                    this.audioManager.speakText(phase.instruction);
-                    
+                    // Speak instruction with subtitle (don't wait for completion during breathing)
+                    this.audioManager.speakText(spokenText);
+
                     // Visual countdown timer for each phase
                     let remainingTime = phase.duration / 1000; // Convert to seconds
                     const updateTimer = () => {
                         if (!this.isActive) return;
-                        
-                        elements.breathingPhase.textContent = 
-                            `第 ${this.currentCycle + 1} 次，共 ${this.totalCycles} 次 - ${Math.ceil(remainingTime)}秒`;
-                        
+
+                        let phaseText = '';
+                        if (phase.type === 'inhale') phaseText = '吸氣';
+                        else if (phase.type === 'hold') phaseText = '閉氣';
+                        else if (phase.type === 'exhale') phaseText = '吐氣';
+
+                        elements.breathingPhase.textContent =
+                            `第 ${this.currentCycle + 1} 次循環 - ${phaseText} ${Math.ceil(remainingTime)}秒`;
+
                         remainingTime--;
-                        
+
                         if (remainingTime > 0) {
                             this.phaseTimer = setTimeout(updateTimer, 1000);
                         }
                     };
-                    
+
                     updateTimer();
-                    
+
                     // Wait for phase duration
                     await new Promise(resolve => {
                         setTimeout(resolve, phase.duration);
                     });
-                    
+
                 } catch (error) {
                     console.error('Error in breathing phase:', error);
                     break;
                 }
             }
-            
+
             this.currentCycle++;
+
+            // Short pause between cycles
+            if (this.isActive && this.currentCycle < this.totalCycles) {
+                elements.breathingInstruction.textContent = "很好，準備下一次循環...";
+                elements.breathingPhase.textContent = `完成 ${this.currentCycle} 次，準備第 ${this.currentCycle + 1} 次`;
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
         }
-        
+
         if (this.isActive) {
-            // Completion message
+            // Completion message with subtitle
             try {
-                await this.audioManager.speakText("很好！深呼吸練習完成了。現在你可以安心地休息了。");
+                elements.breathingInstruction.textContent = "練習完成！";
+                elements.breathingPhase.textContent = "身心放鬆，準備入睡";
+
+                await this.audioManager.speakText("很好！4-7-8呼吸法練習完成了。你的身心現在應該感到更加放鬆，可以安心地進入夢鄉了。");
             } catch (error) {
                 console.error('Error speaking completion message:', error);
             }
-            
+
+            // Wait a moment before hiding
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
             this.stopExercise();
         }
     }
-    
+
     stopExercise() {
         this.isActive = false;
         this.audioManager.stopSpeech();
-        
+
         if (this.phaseTimer) {
             clearTimeout(this.phaseTimer);
             this.phaseTimer = null;
         }
-        
-        // Reset UI
+
+        // Reset UI - back to clean initial state
         elements.startBreathingBtn.style.display = 'inline-block';
         elements.stopBreathingBtn.style.display = 'none';
-        elements.breathingInstruction.textContent = '準備開始放鬆練習';
-        elements.breathingPhase.textContent = '跟著語音指導一起深呼吸';
+
+        // Hide breathing content container - back to clean state (no instructions)
+        elements.breathingContent.style.display = 'none';
+
+        // Reset instruction text for next time
+        elements.breathingInstruction.textContent = '準備開始 4-7-8 呼吸法練習';
+        elements.breathingPhase.textContent = '哈佛醫師推薦的快速入睡技巧';
+
+        // Simple instructions remain visible (no need to show again)
+
         appState.breathingActive = false;
     }
-    
+
     getCurrentPhase() {
         return this.currentPhase;
     }
@@ -852,48 +968,52 @@ class EnhancedNavigationController extends NavigationController {
         this.storyPlayer = storyPlayer;
         this.breathingController = breathingController;
         this.aiStoryGenerator = new AIStoryGenerator();
-        
-        // Load default story
+        this.hasLoadedInitialStory = false;
+
+        // Load default story as fallback
         this.storyPlayer.loadStory(storyData);
-        
+
         // Add AI story generation event listener
         elements.generateStoryBtn.addEventListener('click', () => this.handleGenerateStory());
     }
-    
+
     handleStartStory() {
         console.log('Starting story playback');
         elements.startStoryBtn.style.display = 'none';
         elements.stopStoryBtn.style.display = 'inline-block';
         appState.isPlaying = true;
-        
+
         this.storyPlayer.playStory();
     }
-    
+
     handleStopStory() {
         console.log('Stopping story playback');
         this.storyPlayer.stopStory();
     }
-    
+
     handleStartBreathing() {
         console.log('Starting breathing exercise');
         this.breathingController.startExercise();
     }
-    
+
     handleStopBreathing() {
         console.log('Stopping breathing exercise');
         this.breathingController.stopExercise();
     }
-    
+
     async handleGenerateStory() {
         console.log('Generating AI story');
-        
+
         const aiStory = await this.aiStoryGenerator.generateBedtimeStory();
-        
+
         if (aiStory) {
             // Load the new AI-generated story
             this.storyPlayer.loadStory(aiStory);
             console.log('AI story loaded successfully:', aiStory.title);
-            
+
+            // Update button text
+            elements.generateStoryBtn.textContent = '🤖 再創作新故事';
+
             // Ensure the story text is visible after loading
             setTimeout(() => {
                 elements.storyText.style.display = 'block';
@@ -904,26 +1024,80 @@ class EnhancedNavigationController extends NavigationController {
             showErrorMessage('故事生成失敗，請稍後再試');
         }
     }
-    
+
+    async handleAutoGenerateStory() {
+        console.log('Auto-generating AI story on first visit');
+
+        try {
+            // Use the regular method with loading animation for first visit too
+            const aiStory = await this.aiStoryGenerator.generateBedtimeStory();
+
+            if (aiStory) {
+                // Load the new AI-generated story
+                this.storyPlayer.loadStory(aiStory);
+                console.log('✅ Auto AI story loaded successfully:', aiStory.title);
+
+                // Update button text to indicate this is an AI story
+                elements.generateStoryBtn.textContent = '🤖 再創作新故事';
+
+            } else {
+                console.log('⚠️ Auto AI generation failed, keeping default story');
+                // Keep the default story that was already loaded
+                elements.generateStoryBtn.textContent = '🤖 AI創作新故事';
+
+                // Ensure default story is properly displayed
+                elements.storyTitle.textContent = storyData.title;
+                this.storyPlayer.displayStoryText();
+            }
+        } catch (error) {
+            console.error('Auto AI story generation error:', error);
+            console.log('🔄 Using default story as fallback');
+            // Keep the default story that was already loaded
+            elements.generateStoryBtn.textContent = '🤖 AI創作新故事';
+
+            // Ensure default story is properly displayed
+            elements.storyTitle.textContent = storyData.title;
+            this.storyPlayer.displayStoryText();
+        }
+    }
+
     navigateToHome() {
         // Stop any active audio when navigating home
         this.audioManager.stopSpeech();
         this.storyPlayer.stopStory();
         this.breathingController.stopExercise();
-        
+
         super.navigateToHome();
+    }
+
+    navigateToBreathing() {
+        // Stop any active audio when navigating to breathing page
+        this.audioManager.stopSpeech();
+        this.storyPlayer.stopStory();
+        this.breathingController.stopExercise();
+
+        super.navigateToBreathing();
+    }
+
+    async navigateToStories() {
+        // Stop any active audio when navigating to stories page
+        this.audioManager.stopSpeech();
+        this.storyPlayer.stopStory();
+        this.breathingController.stopExercise();
+
+        await super.navigateToStories();
     }
 }
 
 // Error Handling
 function handleError(error, context) {
     console.error(`Error in ${context}:`, error);
-    
+
     // Show user-friendly error message
-    const errorMessage = error.message.includes('network') 
+    const errorMessage = error.message.includes('network')
         ? '網路連線有問題，請稍後再試。'
         : '發生了一些問題，請重新整理頁面再試。';
-    
+
     // You could show this in a modal or alert
     // For now, just log it
     console.log('User message:', errorMessage);
@@ -932,22 +1106,22 @@ function handleError(error, context) {
 // Initialize App
 function initializeApp() {
     console.log('Initializing SleepyLearn App...');
-    
+
     try {
         // Check browser support
         const browserSupport = checkBrowserSupport();
-        
+
         // Initialize core components
         const audioManager = new AudioManager();
         const storyPlayer = new StoryPlayer(audioManager);
         const breathingController = new BreathingController(audioManager);
         const navigation = new EnhancedNavigationController(audioManager, storyPlayer, breathingController);
-        
+
         // Set initial app state
         appState.currentPage = 'home';
         appState.isPlaying = false;
         appState.breathingActive = false;
-        
+
         // Test speech synthesis on first user interaction
         let speechTested = false;
         document.addEventListener('click', async () => {
@@ -962,10 +1136,10 @@ function initializeApp() {
                 }
             }
         }, { once: true });
-        
+
         console.log('SleepyLearn App initialized successfully');
         console.log('Current app state:', appState);
-        
+
         // Store references globally for debugging
         window.SleepyLearn = {
             appState,
@@ -975,7 +1149,7 @@ function initializeApp() {
             breathingController,
             navigation
         };
-        
+
     } catch (error) {
         handleError(error, 'App Initialization');
     }
@@ -987,7 +1161,7 @@ function setupKeyboardNavigation() {
         // Escape key - go back to home or stop current activity
         if (event.key === 'Escape') {
             const currentPage = appState.currentPage;
-            
+
             if (currentPage === 'stories' && appState.isPlaying) {
                 window.SleepyLearn?.storyPlayer?.stopStory();
             } else if (currentPage === 'breathing' && appState.breathingActive) {
@@ -996,13 +1170,13 @@ function setupKeyboardNavigation() {
                 window.SleepyLearn?.navigation?.navigateToHome();
             }
         }
-        
+
         // Space bar - start/stop current activity
         if (event.key === ' ' || event.code === 'Space') {
             event.preventDefault();
-            
+
             const currentPage = appState.currentPage;
-            
+
             if (currentPage === 'stories') {
                 if (appState.isPlaying) {
                     window.SleepyLearn?.storyPlayer?.stopStory();
@@ -1017,7 +1191,7 @@ function setupKeyboardNavigation() {
                 }
             }
         }
-        
+
         // Number keys for quick navigation
         if (event.key === '1' && appState.currentPage === 'home') {
             window.SleepyLearn?.navigation?.navigateToStories();
@@ -1037,10 +1211,10 @@ function showErrorMessage(message) {
         errorDiv.className = 'error-message';
         document.querySelector('.container').appendChild(errorDiv);
     }
-    
+
     errorDiv.textContent = message;
     errorDiv.style.display = 'block';
-    
+
     // Auto-hide after 5 seconds
     setTimeout(() => {
         errorDiv.style.display = 'none';
@@ -1058,7 +1232,7 @@ function monitorPerformance() {
             }
         }, 30000); // Check every 30 seconds
     }
-    
+
     // Monitor long tasks
     if ('PerformanceObserver' in window) {
         try {

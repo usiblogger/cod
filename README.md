@@ -10,15 +10,16 @@ A gentle, child-friendly web application designed to help children aged 3-8 year
 - **Synchronized Text Highlighting**: Text lights up as it's being read aloud
 - **Chinese Voice Narration**: Clear, child-appropriate speech synthesis
 
-### 🫁 Guided Breathing Exercises
-- **Relaxing Breathing Cycles**: 5 complete breathing cycles with voice guidance
+### 🫁 4-7-8 Breathing Method
+- **Harvard-Recommended Technique**: Based on Dr. Andrew Weil's 4-7-8 breathing method
+- **Scientifically Proven**: Activates parasympathetic nervous system for rapid relaxation
 - **Timed Phases**: 
-  - Inhale: 8 seconds
-  - Hold: 4 seconds  
-  - Exhale: 10 seconds
-  - Rest: 4 seconds
+  - Inhale through nose: 4 seconds
+  - Hold breath: 7 seconds  
+  - Exhale through mouth: 8 seconds
+- **4 Complete Cycles**: Optimal number for sleep preparation
 - **Visual Timer**: Real-time countdown for each breathing phase
-- **Calming Voice Instructions**: Gentle Chinese voice guidance
+- **Guided Instructions**: Step-by-step voice guidance in Chinese
 
 ### 🎨 Child-Friendly Design
 - **Large Touch-Friendly Buttons**: Minimum 80px height for easy interaction
