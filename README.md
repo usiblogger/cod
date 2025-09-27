@@ -36,11 +36,6 @@ This project integrates *25+ cutting-edge technologies* including:
 - *3 Development Tools*: NPM, Git, Markdown
 
 
-## 📄 License
-
-Open source project - feel free to use, modify, and share!
-
-
 ## 📱 SleepyLearn Mobile App Build Guide Quick Start
 
 ### 1. Install Dependencies
